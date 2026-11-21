@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ task.title }}</h1>
+  <a href="{% url 'tasks:task-update' pk=task.id %}" class="btn btn-secondary link-to-page">
+    Update
+  </a>
+  <a href="{% url 'tasks:task-delete' pk=task.id %}" class="btn btn-danger link-to-page">
+    Delete
+  </a>
+  <div class="ml-3">
+
+  <div>
+    {% if task.description %}
+      {{ task.description }}
+    {% else %}
+      No description
+    {% endif %}
+  </div>
+  <div>{{ task.is_completed|yesno:"Done,Not done" }}</div>
+  <div> {{ task.created_at }} </div>
+  <div>
+    {% if task.deadline %}
+      {{ task.deadline }}
+    {% else %}
+      No deadline
+    {% endif %}
+</div>
+  <div>
+    <h4>Tags</h4>
+    {% for tag in task.tags.all %}
+        <hr>
+        <p> {{ tag.name }}</p>
+    {% empty %}
+      <p>No tags</p>
+    {% endfor %}
+  </div>
+{% endblock %}
