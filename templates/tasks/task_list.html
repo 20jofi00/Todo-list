@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="h2">Tasks</h1>
+  <a href="{% url 'tasks:task-create' %}" class="btn btn-primary mb-4">Add task</a>
+
+  {% for task in task_list %}
+    <article class="bg-white border rounded p-3 mb-3 text-break">
+      <h2 class="h5">{{ task.title }}</h2>
+      <p class="text-secondary">{{ task.is_completed|yesno:"Done,Not done" }}</p>
+
+      {% if task.description %}
+        <p>{{ task.description|linebreaksbr }}</p>
+      {% endif %}
+
+      <p class="text-secondary">Created: {{ task.created_at|date:"d M Y, H:i" }}</p>
+      {% if task.deadline %}
+        <p>Deadline: {{ task.deadline|date:"d M Y, H:i" }}</p>
+      {% endif %}
+
+      <p>
+        Tags:
+        {% for tag in task.tags.all %}
+          {{ tag.name }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+          No tags
+        {% endfor %}
+      </p>
+
+      <form action="{% url 'tasks:task-toggle' pk=task.id %}" method="post" class="d-flex flex-wrap gap-2">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">
+          {{ task.is_completed|yesno:"Undo,Complete" }}
+        </button>
+        <a href="{% url 'tasks:task-update' pk=task.id %}" class="btn btn-secondary">Update</a>
+        <a href="{% url 'tasks:task-delete' pk=task.id %}" class="btn btn-outline-danger">Delete</a>
+      </form>
+    </article>
+  {% empty %}
+    <p class="text-secondary">There are no tasks yet</p>
+  {% endfor %}
+{% endblock %}
